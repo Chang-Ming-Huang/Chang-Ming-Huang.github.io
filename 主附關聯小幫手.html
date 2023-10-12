@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主附約關連小幫手</title>
+    <style>
+        #codeOutput {
+            display: none;
+            color: blue;
+        }
+        #outputText {
+            color: blue;
+        }
+
+        #inputText {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- <div> 第一步：進保發查詢商品的主附約關連，然後將有關連性的商品全部都貼到下面這個方塊中</div> -->
+    <h2> 第一步：進保發查詢商品的主附約關連，然後將有關連性的商品全部都貼到下面這個方塊中</h2>
+    <textarea id="inputText" placeholder="請在這裡貼上保發資料"></textarea>
+    
+
+    
+    <!-- <div>第二步：開啟 admin 後台勾選主附約關連的頁面<br><br>第三步：點選鍵盤的 F12 進到 console 分頁，並將以下程式碼貼入到 console 區塊中，然後按 Enter</div> -->
+    <h2>第二步：開啟 admin 後台勾選主附約關連的頁面</h2><br>
+    <h2>第三步：點選鍵盤的 F12 進到 console 分頁，並將以下程式碼貼入到 console 區塊中，然後按 Enter</h2>
+    <br><br><br>
+
+    <div id="outputText"></div>
+    <div id="codeOutput">
+        <pre>
+            // 獲取網頁上的所有 checkbox 元素
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // 將所有 checkbox 取消勾選
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // 使用Set物件來儲存未找到的文字, 確保只有獨特的文字被儲存
+            let notFound = new Set();
+
+            // 檢查每個 target 的文字是否包含在 option 的文字中
+            Object.values(targetTexts).forEach(targetText => {
+                let found = false; // 用來標記是否找到相符文字  
+                checkboxes.forEach(checkbox => {
+                    const optionText = checkbox.nextSibling.textContent.trim();
+                    if (optionText.includes(targetText)) {
+                        checkbox.checked = true; // 勾選相符的 checkbox
+                        found = true; // 標記為找到相符文字
+                    }
+                });
+                if (!found) {
+                    notFound.add(targetText); // 將未找到的文字加入 notFound Set 中
+                }
+            });
+
+            // 將 notFound Set 轉換為陣列
+            const notFoundArray = [...notFound];
+
+            // 印出 notFound 中的文字（一行一行分開）
+            console.log("以下為保發有，但 Finfo 後台無法勾選的商品:");
+            notFoundArray.forEach(text => {
+                console.log(text);
+            });
+        </pre>
+    </div>
+    <br><br>
+    <h3>===== 程式碼結束線 (分隔用，不需要複製此行) =====</h3>
+    <br>
+    <h3>備註：以下資料可以忽略不看，只是方便你檢查「複製-貼上」的資料是否跟保發的商品列表一致</h3>
+    <table border="1" id="outputTable">
+        <thead>
+            <tr>
+                <th>商品名稱</th>
+                <th>保發編碼</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        document.getElementById("inputText").addEventListener("input", function () {
+            var inputText = this.value;
+            var lines = inputText.split('\n');
+            var tbody = document.querySelector("#outputTable tbody");
+            tbody.innerHTML = "";
+            var targetTexts = {};
+
+            lines.forEach(function (line, index) {
+                var columns = line.split('\t');
+                if (columns.length >= 2) {
+                    var row = document.createElement("tr");
+                    var cell1 = document.createElement("td");
+                    var cell2 = document.createElement("td");
+                    cell1.textContent = columns[0];
+                    cell2.textContent = columns[1];
+                    row.appendChild(cell1);
+                    row.appendChild(cell2);
+                    tbody.appendChild(row);
+
+                    // 將商品名稱的文字加入targetTexts對象中
+                    targetTexts["Line" + (index + 1)] = columns[0];
+                }
+            });
+
+            
+            // 去除文字中的"(第 n 次部分變更)"，n 可能是1位或多位數字
+            for (const line in targetTexts) {
+                targetTexts[line] = targetTexts[line].replace(/\(第\d+次部分變更\)/g, '');
+            }
+            
+
+            // 生成JavaScript對象的文字
+            var outputText = "const targetTexts = {\n";
+            for (var key in targetTexts) {
+                outputText += `    "${key}": "${targetTexts[key]}",\n`;
+            }
+            outputText += "};\n\n";
+
+            // 將文字顯示在outputText區塊中
+            document.getElementById("outputText").textContent = outputText;
+
+
+            var inputText = this.value.trim();
+            // 檢查textarea是否有內容
+            if (inputText.length > 0) {
+                // 將#codeOutput的樣式設為display: block;以顯示它
+                document.getElementById("codeOutput").style.display = "block";
+
+                // （略過其他部分的程式碼）
+            } else {
+                // 如果textarea沒有內容，將#codeOutput的樣式設為display: none;以隱藏它
+                document.getElementById("codeOutput").style.display = "none";
+            }
+        });
+    </script>
+</body>
+
+</html>
