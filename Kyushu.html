@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>九州七日行程 - 熊本・鹿兒島・阿蘇</title>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f0f5f9;
+    }
+    header {
+      background-color: #1f4e79;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.2em;
+    }
+    h2 {
+      background-color: #1f4e79;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-top: 40px;
+      text-align: center;
+    }
+    .day-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th {
+      background-color: #e6f0f9;
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #c8d8e6;
+      vertical-align: middle;
+    }
+    td {
+      padding: 12px;
+      border: 1px solid #c8d8e6;
+      vertical-align: middle; /* 設定為垂直置中 */
+    }
+    .time-col {
+      width: 15%;
+      background-color: #f0f7ff;
+      font-weight: bold;
+    }
+    .activity-col {
+      width: 30%;
+    }
+    .info-col {
+      width: 55%;
+    }
+    .mapcode {
+      background-color: #e6f0f9;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 3px 0;
+      font-family: monospace;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    a {
+      color: #2a7cc7;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .version-tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .version-tab {
+      padding: 10px 20px;
+      background-color: #e9f4fb;
+      border: 1px solid #bbd8ec;
+      cursor: pointer;
+      margin-right: 10px;
+      border-radius: 5px 5px 0 0;
+    }
+    .version-tab.active {
+      background-color: #1f4e79;
+      color: white;
+      border-color: #1f4e79;
+    }
+    .version-content {
+      display: none;
+    }
+    .version-content.active {
+      display: block;
+    }
+    .note {
+      background-color: #fff9e6;
+      padding: 15px;
+      border-left: 4px solid #ffcb66;
+      margin: 15px 0;
+    }
+    .flight-info {
+      background-color: #e9f4fb;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .restaurant-list li {
+      margin-bottom: 8px;
+    }
+    
+    /* 確保內容在每個欄位中垂直置中 */
+    .info-col > p, .info-col > ul, .info-col > ol, .activity-col > p {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    
+    /* 改善標題與內容的垂直對齊 */
+    thead th {
+      font-weight: bold;
+      vertical-align: middle;
+    }
+    
+    /* 增加特色元素的視覺區分 */
+    .highlight {
+      color: #1f4e79;
+      font-weight: bold;
+    }
+    
+    /* 增加頁面底部導航功能 */
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding: 20px 0;
+      border-top: 1px solid #c8d8e6;
+    }
+    
+    /* 增加頂部和底部的空間 */
+    body {
+      padding-top: 30px;
+      padding-bottom: 50px;
+    }
+    
+    /* 確保版本切換選項卡的垂直對齊 */
+    .version-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 回到頂部按鈕 */
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #1f4e79;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+    }
+    
+    .back-to-top:hover {
+      background-color: #2a7cc7;
+    }
+    
+    /* 日期導航欄 */
+    .date-nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      padding: 10px 0;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 100;
+      border-bottom: 1px solid #c8d8e6;
+    }
+    
+    .date-nav a {
+      padding: 8px 12px;
+      background-color: #e9f4fb;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #1f4e79;
+      font-weight: bold;
+    }
+    
+    .date-nav a:hover {
+      background-color: #1f4e79;
+      color: white;
+    }
+  </style>
+  
+  <script>
+    function switchVersion(day, version) {
+      // 隱藏所有版本
+      var contents = document.querySelectorAll('#' + day + '-version1, #' + day + '-version2');
+      for (var i = 0; i < contents.length; i++) {
+        contents[i].classList.remove('active');
+      }
+      
+      // 顯示選擇的版本
+      document.getElementById(day + '-' + version).classList.add('active');
+      
+      // 更新選項卡狀態
+      var tabs = document.querySelectorAll('.version-tab');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+      }
+      
+      // 設定當前選項卡為激活狀態
+      event.currentTarget.classList.add('active');
+    }
+  </script>
+</head>
+<body>
+
+  <header>
+    <h1>九州七日行程 - 熊本・鹿兒島・阿蘇</h1>
+    <p>2024年5月6日 - 5月12日</p>
+  </header>
+  
+  <div class="date-nav">
+    <a href="#day1">第一天 5/6</a>
+    <a href="#day2">第二天 5/7</a>
+    <a href="#day3">第三天 5/8</a>
+    <a href="#day4">第四天 5/9</a>
+    <a href="#day5">第五天 5/10</a>
+    <a href="#day6">第六天 5/11</a>
+    <a href="#day7">第七天 5/12</a>
+  </div>
+
+  <div id="day1" class="day-container">
+    <h2>第一天 5/6（二）</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th class="time-col">時間</th>
+          <th class="activity-col">活動</th>
+          <th class="info-col">詳細資訊</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="time-col">07:30-10:45</td>
+          <td class="activity-col">桃園機場飛往熊本機場</td>
+          <td class="info-col">
+            <div class="flight-info">
+              <p>飛機航班: 星宇航空 JX846</p>
+              <p>起飛時間: 07:30</p>
+              <p>到達時間: 10:45</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">11:00-12:00</td>
+          <td class="activity-col">TOYOTA租車</td>
+          <td class="info-col">
+            <p>TOYOTA熊本機場店</p>
+            <p class="mapcode">Mapcode: 29 598 353*70</p>
+            <p><a href="https://www.google.com/maps/place/TOYOTA+Rent+a+Car+Kumamoto+Airport/@32.8314821,130.860012,17z/" target="_blank">Google地圖連結</a></p>
+            <p><a href="https://banbi.tw/kumamoto-rent-toyota/" target="_blank">機場領車步驟</a></p>
+            <p><a href="https://rent.toyota.co.jp/zh-tw/reservation/index01.aspx?shopMode=0&rShop=68401&eShop=009" target="_blank">TOYOTA租車官網</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">12:30-14:00</td>
+          <td class="activity-col">前往餐廳用午餐</td>
+          <td class="info-col">
+            <p>寿司虎 熊本益城インター店</p>
+            <p class="mapcode">Mapcode: 29 439 271*15</p>
+            <p><a href="https://www.google.com/maps/place/Sushitora+Kumamotomashiki+Inter+Ten/@32.7893185,130.778868,17z/" target="_blank">Google地圖連結</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">14:30-16:30</td>
+          <td class="activity-col">前往界霧島CHECK IN</td>
+          <td class="info-col">
+            <p>寿司虎 熊本益城インター店 -> 界 霧島</p>
+            <p class="mapcode">Mapcode: 376 119 686*35</p>
+            <p><a href="https://www.google.com/maps/place/%E6%98%9F%E9%87%8E%E5%BA%A6%E5%81%87%E6%9D%91+%E7%95%8C+%E9%9C%A7%E5%B3%B6/@31.8681332,130.8690679,17z/" target="_blank">Google地圖連結</a></p>
+            <p><a href="https://hoshinoresorts.com/zh_tw/hotels/kaikirishima/" target="_blank">界霧島官網</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">16:30-晚上</td>
+          <td class="activity-col">界霧島設施遊玩</td>
+          <td class="info-col">
+            <p>享受溫泉設施及飯店各項服務</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="day2" class="day-container">
+    <h2>第二天 5/7（三）</h2>
+    
+    <div class="version-tabs">
+      <div class="version-tab active" onclick="switchVersion('day2', 'version1')">版本一（含櫻島火山）</div>
+      <div class="version-tab" onclick="switchVersion('day2', 'version2')">版本二（不含櫻島火山）</div>
+    </div>
+    
+    <div id="day2-version1" class="version-content active">
+      <div class="note">
+        此行程有登島櫻島火山，在上面看看火山的景點，但因為也會去阿蘇火山，所以櫻島火山上的景觀看個人口味取捨。
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th class="time-col">時間</th>
+            <th class="activity-col">活動</th>
+            <th class="info-col">詳細資訊</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">早上</td>
+            <td class="activity-col">早餐後出發前往霧島神宮</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 376 089 565*02</p>
+              <p><a href="https://www.google.com/maps/place/%E9%9C%A7%E5%B3%B6%E7%A5%9E%E5%AE%AE/@31.8062614,130.7633389,13z/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">上午-中午</td>
+            <td class="activity-col">前往仙嚴院</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 42 099 616*50</p>
+              <p><a href="https://www.google.com/maps/place/%E4%BB%99%E5%B7%96%E5%9C%92/@31.6174194,130.5723206,17z/" target="_blank">Google地圖連結</a></p>
+              <p>午餐選擇：</p>
+              <p>如果仙嚴院裡的櫻華亭有位置就在那邊吃</p>
+              <p><a href="https://www.google.com/maps/place/Ohkatei+Restaurant/@31.6182345,130.5764309,17z/" target="_blank">櫻華亭地圖連結</a></p>
+              <p>如果沒位置可選擇：</p>
+              <ul class="restaurant-list">
+                <li><a href="https://www.google.com/maps/place/%E9%B9%BF%E5%85%92%E5%B3%B6%E7%9C%8C%E7%94%A3A5%E7%AD%89%E7%B4%9A%E9%BB%92%E6%AF%9B%E5%92%8C%E7%89%9B%C3%97%E5%AE%8C%E5%85%A8%E5%80%8B%E5%AE%A4+%E7%89%9B%E4%B8%80%E5%BD%A9+%E5%A4%A9%E6%96%87%E9%A4%A8%E5%BA%97/@31.587968,130.5547362,17z/" target="_blank">燒肉: 鹿児島県産A5等級黒毛和牛×完全個室 牛一彩 天文館店</a></li>
+                <li><a href="https://www.google.com/maps/place/%E9%B0%BB%E9%AD%9A%E6%9C%AB%E3%82%88%E3%81%97/@31.5914259,130.5525459,17z/" target="_blank">鰻魚: 鰻魚末よし うなぎの末よし</a></li>
+                <li><a href="https://www.google.com/maps/place/Ajimori/@31.5887242,130.5539682,17z/" target="_blank">豬肉鍋: Ajimori 黒豚料理 あぢもり</a></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">午飯結束搭乘渡輪去櫻島火山</td>
+            <td class="info-col">
+              <p>搭渡輪區域: 鹿兒島市的櫻島渡輪碼頭 (不用事先預約)</p>
+              <p><a href="https://www.google.com/maps/place/%E6%AB%BB%E5%B3%B6%E6%B8%A1%E8%BC%AA%E9%B9%BF%E5%85%92%E5%B3%B6%E9%96%8B%E8%88%AA%E8%99%95/@31.5964107,130.5627974,20.6z/" target="_blank">渡輪地圖</a></p>
+              <p><a href="https://humanitiescorner.art/sakurajima-ferry/" target="_blank">細節連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">櫻島火山景點遊覽</td>
+            <td class="info-col">
+              <p>主要景點：</p>
+              <ol>
+                <li>湯之平展望所</li>
+                <li>有村熔岩展望所</li>
+                <li>黑神埋沒鳥居</li>
+                <li>月讀神社</li>
+                <li>櫻島熔岩渚公園足湯</li>
+                <li>櫻島遊客中心</li>
+              </ol>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">傍晚</td>
+            <td class="activity-col">回鹿兒島市區逛天文館街</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E5%A4%A9%E6%96%87%E9%A4%A8/@31.5907567,130.5551276,17z/" target="_blank">天文館連結</a></p>
+              <p><a href="https://www.google.com/maps/place/%E9%B9%BF%E5%85%92%E5%B3%B6%E7%89%A9%E7%94%A2%E5%B8%82%E5%A0%B4%EF%BC%BB%E9%B9%BF%E5%85%92%E5%B3%B6%E5%B8%82%EF%BC%BD/@31.5910956,130.5547956,19.04z/" target="_blank">かごしま特産品市場 かご市</a></p>
+              <p>買伴手禮與當地特產</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">19:30-</td>
+            <td class="activity-col">回界霧島晚餐和休息</td>
+            <td class="info-col">
+              <p>19:30 晚餐</p>
+              <p>21:15 免費觀賞天神跳舞表演</p>
+              <p>享受溫泉設施</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div id="day2-version2" class="version-content">
+      <div class="note">
+        此行程是把櫻島火山拿掉，火山上面相對起來沒有特別突出的景點，所以就走一些鹿兒島相對不錯的地方，從一定距離欣賞火山的美，不登島火山。
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th class="time-col">時間</th>
+            <th class="activity-col">活動</th>
+            <th class="info-col">詳細資訊</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">早上</td>
+            <td class="activity-col">早餐後出發前往霧島神宮</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 376 089 565*02</p>
+              <p><a href="https://www.google.com/maps/place/%E9%9C%A7%E5%B3%B6%E7%A5%9E%E5%AE%AE/@31.8062614,130.7633389,13z/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">上午-中午</td>
+            <td class="activity-col">前往仙嚴院</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 42 099 616*50</p>
+              <p><a href="https://www.google.com/maps/place/%E4%BB%99%E5%B7%96%E5%9C%92/@31.6174194,130.5723206,17z/" target="_blank">Google地圖連結</a></p>
+              <p>午餐選擇：</p>
+              <p>如果仙嚴院裡的櫻華亭有位置就在那邊吃</p>
+              <p><a href="https://www.google.com/maps/place/Ohkatei+Restaurant/@31.6182345,130.5764309,17z/" target="_blank">櫻華亭地圖連結</a></p>
+              <p>如果沒位置可選擇：</p>
+              <ul class="restaurant-list">
+                <li><a href="https://www.google.com/maps/place/%E9%B9%BF%E5%85%92%E5%B3%B6%E7%9C%8C%E7%94%A3A5%E7%AD%89%E7%B4%9A%E9%BB%92%E6%AF%9B%E5%92%8C%E7%89%9B%C3%97%E5%AE%8C%E5%85%A8%E5%80%8B%E5%AE%A4+%E7%89%9B%E4%B8%80%E5%BD%A9+%E5%A4%A9%E6%96%87%E9%A4%A8%E5%BA%97/@31.587968,130.5547362,17z/" target="_blank">燒肉: 鹿児島県産A5等級黒毛和牛×完全個室 牛一彩 天文館店</a></li>
+                <li><a href="https://www.google.com/maps/place/%E9%B0%BB%E9%AD%9A%E6%9C%AB%E3%82%88%E3%81%97/@31.5914259,130.5525459,17z/" target="_blank">鰻魚: 鰻魚末よし うなぎの末よし</a></li>
+                <li><a href="https://www.google.com/maps/place/Ajimori/@31.5887242,130.5539682,17z/" target="_blank">豬肉鍋: Ajimori 黒豚料理 あぢもり</a></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">前往鹿兒島水族館</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 42 038 091*50</p>
+              <p><a href="https://www.google.com/maps/place/%E9%B9%BF%E5%85%92%E5%B3%B6%E6%B0%B4%E6%97%8F%E9%A4%A8/@31.5960577,130.562122,17z/" target="_blank">Google地圖連結</a></p>
+              <p><a href="https://journey.tw/kagoshima-ioworld/" target="_blank">水族館介紹連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">前往城山公園展望台</td>
+            <td class="info-col">
+              <p class="mapcode">Mapcode: 42 036 098*30</p>
+              <p><a href="https://www.google.com/maps/place/%E5%9F%8E%E5%B1%B1%E5%85%AC%E5%9C%92%E5%B1%95%E6%9C%9B%E5%8F%B0/@31.5961065,130.5483225,17.82z/" target="_blank">Google地圖連結</a></p>
+              <p>可在此欣賞櫻島火山全景</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">傍晚</td>
+            <td class="activity-col">回鹿兒島市區逛天文館街</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E5%A4%A9%E6%96%87%E9%A4%A8/@31.5907567,130.5551276,17z/" target="_blank">天文館連結</a></p>
+              <p><a href="https://www.google.com/maps/place/%E9%B9%BF%E5%85%92%E5%B3%B6%E7%89%A9%E7%94%A2%E5%B8%82%E5%A0%B4%EF%BC%BB%E9%B9%BF%E5%85%92%E5%B3%B6%E5%B8%82%EF%BC%BD/@31.5910956,130.5547956,19.04z/" target="_blank">かごしま特産品市場 かご市</a></p>
+              <p>買伴手禮與當地特產</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">19:30-</td>
+            <td class="activity-col">回界霧島晚餐和休息</td>
+            <td class="info-col">
+              <p>19:30 晚餐</p>
+              <p>21:15 免費觀賞天神跳舞表演</p>
+              <p>享受溫泉設施</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="day3" class="day-container">
+    <h2>第三天 5/8（四）</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th class="time-col">時間</th>
+          <th class="activity-col">活動</th>
+          <th class="info-col">詳細資訊</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="time-col">上午</td>
+          <td class="activity-col">CHECKOUT 界霧島</td>
+          <td class="info-col">
+            <p>辦理退房手續</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">上午</td>
+          <td class="activity-col">去美術館 Kirishima Open Air Museum</td>
+          <td class="info-col">
+            <p>霧島アートの森</p>
+            <p class="mapcode">Mapcode: 376 378 321*18</p>
+            <p><a href="https://www.google.com/maps/place/Kirishima+Open+Air+Museum/@31.9397145,130.7761177,17z/" target="_blank">Google地圖連結</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">中午</td>
+          <td class="activity-col">青井阿蘇神社</td>
+          <td class="info-col">
+            <p class="mapcode">Mapcode: 195 765 168*47</p>
+            <p><a href="https://www.google.com/maps/place/%E9%9D%92%E4%BA%95%E9%98%BF%E8%98%87%E7%A5%9E%E7%A4%BE/@32.2133395,130.7529185,3a,75y,90t/" target="_blank">Google地圖連結</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">中午</td>
+          <td class="activity-col">吃午飯</td>
+          <td class="info-col">
+            <p><a href="https://www.google.com/maps/place/%E7%90%83%E7%A3%A8%E7%87%92%E9%85%92%E5%92%8C%E7%90%83%E7%A3%A8%E7%BE%8E%E9%A3%9F%E3%83%BB%E9%96%8B/@32.2137779,130.7511483,17z/" target="_blank">球磨燒酒和球磨美食・開</a> (先暫定這家)</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">下午</td>
+          <td class="activity-col">前往 AIRBNB 住宿 CHECK IN</td>
+          <td class="info-col">
+            <p>合志市的住宿</p>
+            <p><a href="https://www.google.com/maps/place/%E3%83%91%E3%83%8A%E3%82%BD%E3%83%8B%E3%83%83%E3%82%AF%E3%83%9B%E3%83%BC%E3%83%A0%E3%82%BA%E3%82%BB%E3%83%AC%E3%83%8B%E3%83%86%E3%82%A3%E3%83%97%E3%83%AC%E3%82%A4%E3%82%B9%E5%BE%A1%E4%BB%A3%E5%BF%97/@32.8932838,130.7436878,19.75z/" target="_blank">住宿的大概位置</a>，房東還沒給確定地址</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">傍晚-晚上</td>
+          <td class="activity-col">市區活動與晚餐</td>
+          <td class="info-col">
+            <p>市區景點: 上下通商店街 新市街</p>
+            <p><a href="https://www.google.com/maps/place/%E4%B8%8A%E9%80%9A%E5%95%86%E5%BA%97%E8%A1%97/@32.8031558,130.7073213,17z/" target="_blank">Google地圖連結</a></p>
+            <p><a href="https://nigi33.tw/kumamoto-21/" target="_blank">商店街介紹連結</a></p>
+            
+            <p>超市選擇（如需自煮）:</p>
+            <ul>
+              <li>
+                <p>マックスバリュ 光の森店 24 HR</p>
+                <p><a href="https://www.google.com/maps/place/%E7%BE%8E%E6%80%9D%E4%BD%B0%E6%A8%82+%E5%85%89%E4%B9%8B%E6%A3%AE%E5%BA%97/@32.8647809,130.779275,17z/" target="_blank">Google地圖連結</a></p>
+              </li>
+              <li>
+                <p>クラッシーノ・マルシェ 9:00 -- 19:00</p>
+                <p><a href="https://www.google.com/maps/place/%E3%82%AF%E3%83%A9%E3%83%83%E3%82%B7%E3%83%BC%E3%83%8E%E3%83%BB%E3%83%9E%E3%83%AB%E3%82%B7%E3%82%A7/@32.8920471,130.7327525,15z/" target="_blank">Google地圖連結</a></p>
+              </li>
+              <li>
+                <p>三河屋スーパー 御代志店 10:00 -- 21:00</p>
+                <p><a href="https://www.google.com/maps/place/Mikawaya+Super+Miyoshi/@32.8882335,130.7458314,15z/" target="_blank">Google地圖連結</a></p>
+              </li>
+              <li>
+                <p>ゆめモール合志 (較大型商場) 9:00～22:00</p>
+                <p><a href="https://www.google.com/maps/place/%E3%82%86%E3%82%81%E3%83%A2%E3%83%BC%E3%83%AB%E5%90%88%E5%BF%97/@32.9003109,130.7471134,15z/" target="_blank">Google地圖連結</a></p>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="day4" class="day-container">
+    <h2>第四天 5/9（五）</h2>
+    
+    <div class="note">
+      這天行程都是在阿蘇火山那一帶，沒有硬性說一定要先去哪裡，就看當天體力狀況跟實際狀況再隨時做出安排就可以。這個安排只是給大家一個參考。
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th class="time-col">時間</th>
+          <th class="activity-col">活動</th>
+          <th class="info-col">詳細資訊</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="time-col">早上</td>
+          <td class="activity-col">吃早餐</td>
+          <td class="info-col">
+            <p>住宿地或附近餐廳</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">上午</td>
+          <td class="activity-col">去Rental819租重機(如果沒租重機就是開車)</td>
+          <td class="info-col">
+            <p><a href="https://www.rental819.com/store/48" target="_blank">重機店鋪官網</a></p>
+            <p><a href="https://www.google.com/maps/place/Rental819%E7%86%8A%E6%9C%AC/@32.8747785,130.6986841,17z/" target="_blank">Google地圖位置</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">上午-下午</td>
+          <td class="activity-col">阿蘇火山區域探索</td>
+          <td class="info-col">
+            <p>主要景點依序：</p>
+            <ol>
+              <li>
+                <p><strong>米塚</strong></p>
+                <p><a href="https://www.google.com/maps/place/Komezuka/@32.9050731,131.0380763,15.76z/" target="_blank">Google地點地圖</a></p>
+              </li>
+              <li>
+                <p><strong>草千里（草千里之濱）</strong></p>
+                <p><a href="https://www.google.com/maps/place/%E8%8D%89%E5%8D%83%E9%87%8C%EF%BC%88%E8%8D%89%E5%8D%83%E9%87%8C%E4%B9%8B%E6%BF%B1%EF%BC%89/@32.8834909,131.0506308,18z/" target="_blank">Google地點地圖</a></p>
+              </li>
+              <li>
+                <p><strong>阿蘇中岳 第1火口</strong></p>
+                <p><a href="https://www.google.com/maps/place/%E9%98%BF%E8%98%87%E4%B8%AD%E5%B2%B3%E7%81%AB%E5%B1%B1%E5%8F%A3/@32.8821452,131.0778558,16z/" target="_blank">景點地圖</a></p>
+                <p><a href="https://www.google.com/maps/place/Sunasenrigahama+Parking+Lot/@32.8821452,131.0778558,16z/" target="_blank">停車場地圖</a> (砂千里ヶ浜駐車場)</p>
+              </li>
+              <li>
+                <p><strong>上色見熊野座神社</strong></p>
+                <p><a href="https://www.google.com/maps/place/%E4%B8%8A%E8%89%B2%E8%A6%8B%E7%86%8A%E9%87%8E%E5%BA%A7%E7%A5%9E%E7%A4%BE/@32.8511558,131.1276857,15z/" target="_blank">Google地點地圖</a></p>
+              </li>
+              <li>
+                <p><strong>高千穗峽</strong></p>
+                <p><a href="https://www.google.com/maps/place/%E9%AB%98%E5%8D%83%E7%A9%97%E5%B3%BD/@32.7012822,131.2981469,17z/" target="_blank">Google地點地圖</a></p>
+                <p><a href="https://eipro.jp/takachiho1/terms/view/toppage?_gl=1*1wbn6u*_ga*MjA2MDM5MjI1NS4xNzQxMzUzODMz*_ga_15MWGPBF8P*MTc0MTM1MzgzMi4xLjAuMTc0MTM1MzgzMi42MC4wLjA." target="_blank">划船預約</a></p>
+              </li>
+            </ol>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">傍晚</td>
+          <td class="activity-col">回Rental819還重機</td>
+          <td class="info-col">
+            <p>如使用租車則不適用</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">晚上</td>
+          <td class="activity-col">餐廳吃飯</td>
+          <td class="info-col">
+            <p>阿蘇附近餐廳推薦:</p>
+            <ul class="restaurant-list">
+              <li>
+                <p><a href="https://www.google.com/maps/place/%E3%81%84%E3%82%8D%E3%82%8A%E8%88%8E+%E5%85%AD%E6%9C%88%E5%85%AD%E6%97%A5/@32.8461153,131.0344433,12z/" target="_blank">いろり舎 六月六日</a> (可網路訂位)</p>
+              </li>
+              <li>
+                <p><a href="https://www.google.com/maps/place/%E9%98%BF%E8%98%87%E7%89%9B%E7%87%92%E8%82%89+%E5%B0%8F%E6%AC%A1%E9%83%8E%E6%B8%95/@32.9392054,131.0812127,13z/" target="_blank">小次郎渕</a> (燒肉) (郵件預約)</p>
+              </li>
+              <li>
+                <p><a href="https://www.google.com/maps/place/%E3%81%82%E3%81%8B%E7%89%9B%E4%B8%BC%E5%B0%82%E9%96%80%E5%BA%97+%E3%81%94%E3%81%A8%E3%81%86%E5%B1%8B%E9%98%BF%E8%98%87%E5%BA%97/@32.9340434,131.0663921,14z/" target="_blank">あか牛丼専門店 ごとう屋阿蘇店</a> (牛井) (IG私訊預約)</p>
+              </li>
+              <li>
+                <p><a href="https://www.google.com/maps/place/Umekura/@32.9426202,131.0798413,15z/" target="_blank">梅くら</a> (懷石料理) (電話預約或是碰運氣現場)</p>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">晚上</td>
+          <td class="activity-col">回民宿</td>
+          <td class="info-col">
+            <p>返回合志市的住宿</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="day5" class="day-container">
+    <h2>第五天 5/10（六）</h2>
+    
+    <div class="version-tabs">
+      <div class="version-tab active" onclick="switchVersion('day5', 'version1')">版本一（海景路線）</div>
+      <div class="version-tab" onclick="switchVersion('day5', 'version2')">版本二（市區庭園及園區）</div>
+    </div>
+    
+    <div id="day5-version1" class="version-content active">
+      <div class="note">
+        此行程大部分都是海景，附近黃昏的風景和海景相當不錯，吃的東西普通，缺點就是路程較遠，玩起來比較累，相當於台北台中當天來回的時間和體力消耗。
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th class="time-col">時間</th>
+            <th class="activity-col">活動</th>
+            <th class="info-col">詳細資訊</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">上午</td>
+            <td class="activity-col">永尾劍神社</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E6%B0%B8%E5%B0%BE%E5%8A%8D%E7%A5%9E%E7%A4%BE/@32.6317215,130.6134819,17z/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">中午</td>
+            <td class="activity-col">吃午飯</td>
+            <td class="info-col">
+              <p>附近餐廳</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">倉岳神社</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E5%80%89%E5%B2%B3%E7%A5%9E%E7%A4%BE/@32.4276985,130.3247518,17z/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">御輿來海岸</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E5%BE%A1%E8%BC%BF%E4%BE%86%E6%B5%B7%E5%B2%B8/@32.671977,130.541056,3a,75y,90t/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">傍晚</td>
+            <td class="activity-col">長部田海床路</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E9%95%B7%E9%83%A8%E7%94%B0%E6%B5%B7%E5%BA%8A%E8%B7%AF/@32.7039655,130.5813435,3a,75y/" target="_blank">Google地圖連結</a></p>
+              <p>觀賞美麗的黃昏海景</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">晚上</td>
+            <td class="activity-col">吃晚餐 OR 超市買菜</td>
+            <td class="info-col">
+              <p>餐廳或超市購物</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">晚上</td>
+            <td class="activity-col">回家</td>
+            <td class="info-col">
+              <p>回合志市的住宿</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div id="day5-version2" class="version-content">
+      <div class="note">
+        此行程是為市區郊區不錯的庭院跟園區，他們都在同一區，所以玩起來不會需要一直開車，然後下午如果要去看厲害的黃昏海景也看的到，結束後是要回家煮飯或是一樣去逛街都可以。
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th class="time-col">時間</th>
+            <th class="activity-col">活動</th>
+            <th class="info-col">詳細資訊</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">上午</td>
+            <td class="activity-col">水前寺成趣園 / 健軍神社</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E6%B0%B4%E5%89%8D%E5%AF%BA%E6%88%90%E8%B6%A3%E5%9C%92/@32.7909206,130.7299243,17z/" target="_blank">水前寺成趣園地圖連結</a></p>
+              <p><a href="https://www.google.com/maps/place/%E5%81%A5%E8%BB%8D%E7%A5%9E%E7%A4%BE/@32.7846356,130.754885,3a,75y,90t/" target="_blank">健軍神社地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">中午</td>
+            <td class="activity-col">吃午飯</td>
+            <td class="info-col">
+              <p>附近餐廳</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">下午</td>
+            <td class="activity-col">熊本市動植物園</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E7%86%8A%E6%9C%AC%E5%B8%82%E5%8B%95%E6%A4%8D%E7%89%A9%E5%9C%92/@32.7745658,130.7450884,17z/" target="_blank">Google地圖連結</a></p>
+              <p>熊本市立動植物園，都在一個園區內</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">傍晚</td>
+            <td class="activity-col">御輿來海岸</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E5%BE%A1%E8%BC%BF%E4%BE%86%E6%B5%B7%E5%B2%B8/@32.671977,130.541056,3a,75y,90t/" target="_blank">Google地圖連結</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">傍晚</td>
+            <td class="activity-col">長部田海床路</td>
+            <td class="info-col">
+              <p><a href="https://www.google.com/maps/place/%E9%95%B7%E9%83%A8%E7%94%B0%E6%B5%B7%E5%BA%8A%E8%B7%AF/@32.7039655,130.5813435,3a,75y/" target="_blank">Google地圖連結</a></p>
+              <p>觀賞美麗的黃昏海景</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="time-col">晚上</td>
+            <td class="activity-col">買菜回家煮，或是逛街煮飯</td>
+            <td class="info-col">
+              <p>上下通商店街 新市街</p>
+              <p><a href="https://www.google.com/maps/place/%E4%B8%8A%E9%80%9A%E5%95%86%E5%BA%97%E8%A1%97/@32.8031558,130.7073213,17z/" target="_blank">Google地圖連結</a></p>
+              <p><a href="https://nigi33.tw/kumamoto-21/" target="_blank">商店街介紹連結</a></p>
+              <p><a href="https://gogojp.tw/kumamon-shopping/" target="_blank">商店街介紹2</a> (其他逛街大樓，建議觀看此連結)</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="day6" class="day-container">
+    <h2>第六天 5/11（日）</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th class="time-col">時間</th>
+          <th class="activity-col">活動</th>
+          <th class="info-col">詳細資訊</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="time-col">上午</td>
+          <td class="activity-col">熊本城</td>
+          <td class="info-col">
+            <p><a href="https://www.google.com/maps/place/%E7%86%8A%E6%9C%AC%E5%9F%8E/@32.8058143,130.7054887,14z/" target="_blank">Google地圖連結</a></p>
+            <p>參觀日本三大名城之一的熊本城</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">中午</td>
+          <td class="activity-col">熊本縣立美術館</td>
+          <td class="info-col">
+            <p><a href="https://www.google.com/maps/place/%E7%86%8A%E6%9C%AC%E7%B8%A3%E7%AB%8B%E7%BE%8E%E8%A1%93%E9%A4%A8/@32.8073938,130.7005404,15z/" target="_blank">Google地圖連結</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">中午</td>
+          <td class="activity-col">吃午飯</td>
+          <td class="info-col">
+            <p>熊本城或美術館附近餐廳</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">下午</td>
+          <td class="activity-col">熊本車站附近逛街，買伴手禮</td>
+          <td class="info-col">
+            <p><a href="https://matcha-jp.com/tw/10346" target="_blank">熊本車站介紹1</a></p>
+            <p><a href="https://gogojp.tw/amu-plaza-kumamoto/" target="_blank">熊本車站介紹2</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">傍晚-晚上</td>
+          <td class="activity-col">上下通商店街 新市街逛街</td>
+          <td class="info-col">
+            <p><a href="https://www.google.com/maps/place/%E4%B8%8A%E9%80%9A%E5%95%86%E5%BA%97%E8%A1%97/@32.8031558,130.7073213,17z/" target="_blank">Google地圖連結</a></p>
+            <p><a href="https://nigi33.tw/kumamoto-21/" target="_blank">商店街介紹連結</a></p>
+            <p><a href="https://gogojp.tw/kumamon-shopping/" target="_blank">商店街介紹2</a> (其他逛街大樓，建議觀看此連結)</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="day7" class="day-container">
+    <h2>第七天 5/12（一）</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th class="time-col">時間</th>
+          <th class="activity-col">活動</th>
+          <th class="info-col">詳細資訊</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="time-col">早上</td>
+          <td class="activity-col">CHECK OUT AIRBNB</td>
+          <td class="info-col">
+            <p>請遵照退房手續跟需要處理的事情，進行退房</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">9:30</td>
+          <td class="activity-col">回 TOYOTA 熊本店還車</td>
+          <td class="info-col">
+            <p>9:30一定要到，要加滿油</p>
+            <p class="mapcode">Mapcode: 29 598 353*70</p>
+            <p><a href="https://www.google.com/maps/place/TOYOTA+Rent+a+Car+Kumamoto+Airport/@32.8314821,130.860012,17z/" target="_blank">Google地圖連結</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td class="time-col">11:55-13:20</td>
+          <td class="activity-col">搭機回桃園回家</td>
+          <td class="info-col">
+            <div class="flight-
