@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的書籤</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fef9e7;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #333;
+        }
+
+        header p {
+            margin-top: 8px;
+            color: #666;
+        }
+
+        .categories {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .category:hover {
+            transform: translateY(-4px);
+        }
+
+        .category h2 {
+            font-size: 1.1em;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f6d365;
+        }
+
+        .category ul {
+            list-style: none;
+        }
+
+        .category li {
+            margin-bottom: 10px;
+        }
+
+        .category a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .category a:hover {
+            background-color: #fef3c7;
+        }
+
+        .category .icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="bookmarks.html">書籤</a>
+    </nav>
+
+    <header>
+        <h1>我的書籤</h1>
+        <p>常用網站與工具連結</p>
+    </header>
+
+    <div class="categories">
+        <div class="category">
+            <h2>開發工具</h2>
+            <ul>
+                <li><a href="https://github.com" target="_blank"><span class="icon">&#128187;</span> GitHub</a></li>
+                <li><a href="https://stackoverflow.com" target="_blank"><span class="icon">&#128218;</span> Stack Overflow</a></li>
+                <li><a href="https://codepen.io" target="_blank"><span class="icon">&#9998;</span> CodePen</a></li>
+                <li><a href="https://developer.mozilla.org" target="_blank"><span class="icon">&#128214;</span> MDN Web Docs</a></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h2>設計資源</h2>
+            <ul>
+                <li><a href="https://fonts.google.com" target="_blank"><span class="icon">&#127912;</span> Google Fonts</a></li>
+                <li><a href="https://unsplash.com" target="_blank"><span class="icon">&#128247;</span> Unsplash</a></li>
+                <li><a href="https://colorhunt.co" target="_blank"><span class="icon">&#127752;</span> Color Hunt</a></li>
+                <li><a href="https://css-tricks.com" target="_blank"><span class="icon">&#128161;</span> CSS-Tricks</a></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h2>學習平台</h2>
+            <ul>
+                <li><a href="https://www.youtube.com" target="_blank"><span class="icon">&#9654;</span> YouTube</a></li>
+                <li><a href="https://www.coursera.org" target="_blank"><span class="icon">&#127891;</span> Coursera</a></li>
+                <li><a href="https://www.udemy.com" target="_blank"><span class="icon">&#128218;</span> Udemy</a></li>
+                <li><a href="https://medium.com" target="_blank"><span class="icon">&#128220;</span> Medium</a></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h2>實用工具</h2>
+            <ul>
+                <li><a href="https://www.google.com" target="_blank"><span class="icon">&#128269;</span> Google</a></li>
+                <li><a href="https://translate.google.com" target="_blank"><span class="icon">&#127760;</span> Google 翻譯</a></li>
+                <li><a href="https://chat.openai.com" target="_blank"><span class="icon">&#129302;</span> ChatGPT</a></li>
+                <li><a href="https://notion.so" target="_blank"><span class="icon">&#128221;</span> Notion</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 我的書籤 — 你可以自由新增或修改連結
+    </footer>
+</body>
+
+</html>
