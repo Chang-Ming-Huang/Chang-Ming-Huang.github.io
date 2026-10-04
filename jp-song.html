@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文歌逐句練習</title>
+    <style>
+        :root {
+            --bg: #fbf7f2;
+            --card: #ffffff;
+            --text: #2b2b2b;
+            --muted: #7a7a7a;
+            --line: #e6dfd6;
+            --accent: #e8769a;
+            --accent-soft: #fde7ee;
+            --active: #fff4c2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1c1b1f;
+                --card: #27262b;
+                --text: #ececec;
+                --muted: #a0a0a0;
+                --line: #3a3940;
+                --accent: #f08aab;
+                --accent-soft: #3d2730;
+                --active: #4a4220;
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Noto Sans JP", sans-serif;
+            line-height: 1.5;
+        }
+
+        .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+
+        h1 { font-size: 1.4rem; margin: 8px 0 4px; }
+        .sub { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .panel h2 { font-size: 1rem; margin: 0 0 8px; }
+
+        .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+        textarea, input[type=text], select {
+            font: inherit;
+            color: inherit;
+            background: transparent;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 6px 8px;
+            width: 100%;
+        }
+
+        #pasteBox { min-height: 140px; }
+
+        button {
+            font: inherit;
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+        button:disabled { opacity: .5; cursor: default; }
+
+        audio { width: 100%; margin-top: 8px; }
+
+        .status { color: var(--muted); font-size: .85rem; }
+
+        .sticky {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: var(--bg);
+            padding: 8px 0;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .card.playing { background: var(--active); }
+
+        .card .num { color: var(--muted); font-size: .8rem; }
+
+        .ja {
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: none !important;
+            padding: 2px 0 !important;
+        }
+
+        .romaji { color: var(--accent); font-style: italic; }
+
+        .field { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+        .field label { flex: 0 0 2.2em; color: var(--muted); font-size: .8rem; }
+
+        .time {
+            width: 6.5em !important;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+        .btns .spacer { flex: 1; }
+
+        .hidden { display: none !important; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>🎤 日文歌逐句練習</h1>
+        <p class="sub">貼上歌詞 → 自動產生羅馬拼音 → 一句一句聽、放慢聽。歌詞和音檔只存在你自己的瀏覽器，不會上傳。</p>
+
+        <div class="panel" id="setupPanel">
+            <h2>1. 貼上日文歌詞（一行一句）</h2>
+            <textarea id="pasteBox" placeholder="在這裡貼上日文歌詞，每一行會變成一句"></textarea>
+            <div class="row" style="margin-top:8px">
+                <button class="primary" id="buildBtn">建立逐句卡片</button>
+                <span class="status" id="romajiStatus">拼音字典載入中…</span>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>2. 原曲音檔（選用）</h2>
+            <input type="file" id="audioFile" accept="audio/*,video/*">
+            <audio id="audio" controls class="hidden"></audio>
+            <p class="status" style="margin:6px 0 0">放音樂時，在每句開始的瞬間按該句的「⏱ 標記開始」。下一句的開始就是上一句的結束。</p>
+        </div>
+
+        <div class="sticky">
+            <div class="row">
+                <label for="rate">速度</label>
+                <select id="rate" style="width:auto">
+                    <option value="0.5">0.5×</option>
+                    <option value="0.75" selected>0.75×</option>
+                    <option value="1">1×</option>
+                </select>
+                <label><input type="checkbox" id="loop"> 單句重複</label>
+                <span class="spacer" style="flex:1"></span>
+                <button id="exportBtn">匯出</button>
+                <button id="importBtn">匯入</button>
+                <button id="clearBtn">清除</button>
+                <input type="file" id="importFile" accept="application/json" class="hidden">
+            </div>
+        </div>
+
+        <div id="list"></div>
+    </div>
+
+    <script>
+        const STORE_KEY = 'jp-song-practice-v1';
+        const $ = (id) => document.getElementById(id);
+
+        let lines = [];   // { ja, romaji, zh, en, start, end }
+        let playingIdx = -1;
+        let stopAt = null;
+        let rafId = null;
+
+        // ---------- 儲存 ----------
+        function save() {
+            try { localStorage.setItem(STORE_KEY, JSON.stringify({ lines })); } catch (e) { }
+        }
+
+        function load() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+                if (data && Array.isArray(data.lines)) lines = data.lines;
+            } catch (e) { }
+        }
+
+        // ---------- 羅馬拼音（kuroshiro + kuromoji）----------
+        let kuroshiro = null;
+        const romajiReady = (async () => {
+            try {
+                const K = window.Kuroshiro.default || window.Kuroshiro;
+                const A = window.KuromojiAnalyzer.default || window.KuromojiAnalyzer;
+                const k = new K();
+                await k.init(new A({ dictPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' }));
+                kuroshiro = k;
+                $('romajiStatus').textContent = '拼音字典已就緒';
+            } catch (e) {
+                console.error(e);
+                $('romajiStatus').textContent = '拼音字典載入失敗，可以手動填寫羅馬拼音';
+            }
+        })();
+
+        async function toRomaji(text) {
+            await romajiReady;
+            if (!kuroshiro || !text.trim()) return '';
+            return kuroshiro.convert(text, { to: 'romaji', mode: 'spaced', romajiSystem: 'hepburn' });
+        }
+
+        // ---------- 畫面 ----------
+        function fmt(t) {
+            return (t == null || isNaN(t)) ? '' : Number(t).toFixed(2);
+        }
+
+        function segEnd(i) {
+            if (lines[i].end != null) return lines[i].end;
+            const next = lines[i + 1];
+            if (next && next.start != null) return next.start;
+            return null;
+        }
+
+        function render() {
+            const list = $('list');
+            list.innerHTML = '';
+            lines.forEach((ln, i) => {
+                const card = document.createElement('div');
+                card.className = 'card' + (i === playingIdx ? ' playing' : '');
+                card.dataset.idx = i;
+                card.innerHTML = `
+                    <div class="num">第 ${i + 1} 句</div>
+                    <input type="text" class="ja" data-k="ja">
+                    <div class="field"><label>拼音</label><input type="text" class="romaji" data-k="romaji"></div>
+                    <div class="field"><label>中文</label><input type="text" data-k="zh" placeholder="自己填中文意思"></div>
+                    <div class="field"><label>英文</label><input type="text" data-k="en" placeholder="Fill in English"></div>
+                    <div class="btns">
+                        <button data-act="song" title="播放這一句原曲">🎵 原曲</button>
+                        <button data-act="tts" title="用語音合成朗讀">🗣 朗讀</button>
+                        <button data-act="mark" title="把音樂目前的時間設為這句的開始">⏱ 標記開始</button>
+                        <span class="spacer"></span>
+                        <input type="text" class="time" data-k="start" placeholder="開始秒">
+                        <input type="text" class="time" data-k="end" placeholder="結束秒">
+                        <button data-act="regen" title="重新產生羅馬拼音">↻</button>
+                    </div>`;
+                card.querySelectorAll('[data-k]').forEach((el) => {
+                    const k = el.dataset.k;
+                    el.value = (k === 'start' || k === 'end') ? fmt(ln[k]) : (ln[k] || '');
+                });
+                list.appendChild(card);
+            });
+            updateSongButtons();
+        }
+
+        function updateSongButtons() {
+            const hasAudio = !!$('audio').src;
+            document.querySelectorAll('[data-act=song],[data-act=mark]').forEach((b) => {
+                b.disabled = !hasAudio;
+            });
+        }
+
+        function highlight(i) {
+            playingIdx = i;
+            document.querySelectorAll('.card').forEach((c) => {
+                c.classList.toggle('playing', Number(c.dataset.idx) === i);
+            });
+        }
+
+        // ---------- 播放：原曲片段 ----------
+        function playSong(i) {
+            const audio = $('audio');
+            const start = lines[i].start;
+            if (start == null) { alert('這一句還沒有標記開始時間'); return; }
+            stopTts();
+            audio.currentTime = start;
+            audio.playbackRate = Number($('rate').value);
+            audio.preservesPitch = true;
+            stopAt = { idx: i, start, end: segEnd(i) };
+            highlight(i);
+            audio.play();
+            watch();
+        }
+
+        function watch() {
+            cancelAnimationFrame(rafId);
+            const audio = $('audio');
+            const tick = () => {
+                if (!stopAt || audio.paused) return;
+                if (stopAt.end != null && audio.currentTime >= stopAt.end) {
+                    if ($('loop').checked) {
+                        audio.currentTime = stopAt.start;
+                    } else {
+                        audio.pause();
+                        stopAt = null;
+                        return;
+                    }
+                }
+                rafId = requestAnimationFrame(tick);
+            };
+            rafId = requestAnimationFrame(tick);
+        }
+
+        // ---------- 播放：語音合成 ----------
+        function jaVoice() {
+            const voices = speechSynthesis.getVoices();
+            return voices.find((v) => v.lang === 'ja-JP') || voices.find((v) => v.lang.startsWith('ja'));
+        }
+
+        function stopTts() {
+            if ('speechSynthesis' in window) speechSynthesis.cancel();
+        }
+
+        function playTts(i) {
+            if (!('speechSynthesis' in window)) { alert('這個瀏覽器不支援語音合成'); return; }
+            $('audio').pause();
+            stopAt = null;
+            stopTts();
+            const u = new SpeechSynthesisUtterance(lines[i].ja);
+            u.lang = 'ja-JP';
+            const v = jaVoice();
+            if (v) u.voice = v;
+            u.rate = Number($('rate').value);
+            u.onend = () => {
+                if ($('loop').checked && playingIdx === i) setTimeout(() => playingIdx === i && playTts(i), 400);
+            };
+            highlight(i);
+            speechSynthesis.speak(u);
+        }
+
+        if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => { };
+
+        // ---------- 事件 ----------
+        $('buildBtn').addEventListener('click', async () => {
+            const raw = $('pasteBox').value.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+            if (!raw.length) return;
+            if (lines.length && !confirm('會取代目前的逐句卡片，確定嗎？')) return;
+            lines = raw.map((ja) => ({ ja, romaji: '', zh: '', en: '', start: null, end: null }));
+            render();
+            for (let i = 0; i < lines.length; i++) {
+                lines[i].romaji = await toRomaji(lines[i].ja);
+            }
+            save();
+            render();
+        });
+
+        $('list').addEventListener('input', (e) => {
+            const el = e.target;
+            const card = el.closest('.card');
+            if (!card || !el.dataset.k) return;
+            const i = Number(card.dataset.idx);
+            const k = el.dataset.k;
+            if (k === 'start' || k === 'end') {
+                const n = parseFloat(el.value);
+                lines[i][k] = isNaN(n) ? null : n;
+            } else {
+                lines[i][k] = el.value;
+            }
+            save();
+        });
+
+        $('list').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-act]');
+            if (!btn) return;
+            const i = Number(btn.closest('.card').dataset.idx);
+            const act = btn.dataset.act;
+            if (act === 'song') playSong(i);
+            if (act === 'tts') playTts(i);
+            if (act === 'mark') {
+                lines[i].start = Number($('audio').currentTime.toFixed(2));
+                save();
+                btn.closest('.card').querySelector('[data-k=start]').value = fmt(lines[i].start);
+            }
+            if (act === 'regen') {
+                lines[i].romaji = await toRomaji(lines[i].ja);
+                save();
+                btn.closest('.card').querySelector('[data-k=romaji]').value = lines[i].romaji;
+            }
+        });
+
+        $('audioFile').addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const audio = $('audio');
+            if (audio.src) URL.revokeObjectURL(audio.src);
+            audio.src = URL.createObjectURL(f);
+            audio.classList.remove('hidden');
+            updateSongButtons();
+        });
+
+        $('rate').addEventListener('change', () => {
+            $('audio').playbackRate = Number($('rate').value);
+        });
+
+        $('exportBtn').addEventListener('click', () => {
+            const blob = new Blob([JSON.stringify({ lines }, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'song-practice.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
+
+        $('importBtn').addEventListener('click', () => $('importFile').click());
+        $('importFile').addEventListener('change', async (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            try {
+                const data = JSON.parse(await f.text());
+                if (!Array.isArray(data.lines)) throw new Error('格式不對');
+                lines = data.lines;
+                save();
+                render();
+            } catch (err) {
+                alert('匯入失敗：' + err.message);
+            }
+            e.target.value = '';
+        });
+
+        $('clearBtn').addEventListener('click', () => {
+            if (!confirm('清除所有逐句卡片？')) return;
+            lines = [];
+            save();
+            render();
+        });
+
+        load();
+        render();
+    </script>
+</body>
+
+</html>
