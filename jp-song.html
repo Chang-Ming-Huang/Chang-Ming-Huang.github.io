@@ -128,8 +128,6 @@
 
         .hidden { display: none !important; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
 </head>
 
 <body>
@@ -142,7 +140,7 @@
             <textarea id="pasteBox" placeholder="在這裡貼上日文歌詞，每一行會變成一句"></textarea>
             <div class="row" style="margin-top:8px">
                 <button class="primary" id="buildBtn">建立逐句卡片</button>
-                <span class="status" id="romajiStatus">拼音字典載入中…</span>
+                <span class="status" id="romajiStatus">拼音字典載入中…（可以先貼歌詞建立卡片）</span>
             </div>
         </div>
 
@@ -174,6 +172,19 @@
     </div>
 
     <script>
+        // kuromoji 用 path.join 組字典網址，會把 "https://" 變成 "https:/"，
+        // 瀏覽器就把它當成本站的相對路徑而 404。這裡把它修回來。
+        (() => {
+            const open = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+                if (typeof url === 'string') url = url.replace(/^(https?):\/(?!\/)/, '$1://');
+                return open.call(this, method, url, ...rest);
+            };
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    <script>
         const STORE_KEY = 'jp-song-practice-v1';
         const $ = (id) => document.getElementById(id);
 
@@ -201,7 +212,11 @@
                 const K = window.Kuroshiro.default || window.Kuroshiro;
                 const A = window.KuromojiAnalyzer.default || window.KuromojiAnalyzer;
                 const k = new K();
-                await k.init(new A({ dictPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' }));
+                const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 60000));
+                await Promise.race([
+                    k.init(new A({ dictPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/' })),
+                    timeout,
+                ]);
                 kuroshiro = k;
                 $('romajiStatus').textContent = '拼音字典已就緒';
             } catch (e) {
